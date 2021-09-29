@@ -104,12 +104,13 @@ def percentchance(target):
 
 class WishGenerator:
   
-    def __init__(self, wishnumber, trialnumber, events = 0, standards = 0, overall = 0):
+    def __init__(self, wishnumber, trialnumber, events = 0, standards = 0, overall = 0, pityinput = 1):
         self.wishnumber = wishnumber
         self.trialnumber = trialnumber
+        self.pityinput = pityinput
         
     def setrunresult(self):
-        self.events, self.standards, self.overall = self.wishrepeater(self.wishnumber, self.trialnumber)
+        self.events, self.standards, self.overall = self.wishrepeater(self.wishnumber, self.trialnumber, self.pityinput)
 
     #Function to work out if you win or lose a 50/50.
     def fiftyfifty(self, haspulledstandard):
@@ -136,7 +137,7 @@ class WishGenerator:
         else:
             return False
       
-    def makeawish(self, wishnumber, pityscore = 1):
+    def makeawish(self, wishnumber, pityscore):
         wishcounter = 0
         pullscounter = {"event" : 0, "standard" : 0}
         haspulledstandard = False
@@ -151,14 +152,14 @@ class WishGenerator:
                 wishcounter += 1
         return pullscounter
         
-    def wishrepeater(self, wishnumber, wishrepeat = 1):
+    def wishrepeater(self, wishnumber, wishrepeat = 1, pityscore = 1):
         eventslist = []
         standardslist = []
         repeatcount = 0
         print("Thinking...")
         while repeatcount <= wishrepeat:
             #Generates a dictionary with event and standard pulls.
-            getstdandevnt = self.makeawish(wishnumber)
+            getstdandevnt = self.makeawish(wishnumber, pityscore)
             
             #Grabs the number of successful pulls out of the dictionary.
             eventspulled = getstdandevnt["event"]
@@ -189,14 +190,14 @@ if runprimos.upper() == "Y":
     pityscore = int(input("What's your current pity? (Put 1 for no pity.)"))
     if wishrepeats <= 0:
         wishrepeats = 1
-    currentrun = WishGenerator(wishnumber = WishGenerator.primoconverter(primogems, intertwined),trialnumber = wishrepeats)   
+    currentrun = WishGenerator(wishnumber = WishGenerator.primoconverter(primogems, intertwined),trialnumber = wishrepeats, pityinput = pityscore)    
     currentrun.setrunresult()
     
 else:             
     wishnumbers = int(input("How many wishes?"))
     wishrepeats = int(input("How many times?"))
     pityscore = int(input("What's your current pity? (Put 1 for no pity.)"))
-    currentrun = WishGenerator(wishnumbers, wishrepeats)
+    currentrun = WishGenerator(wishnumbers, wishrepeats, pityinput = pityscore)
     currentrun.setrunresult()
                  
 currentrun.wishprinter()

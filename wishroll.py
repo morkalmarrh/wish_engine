@@ -94,71 +94,86 @@ chancedict = {
   90 : 100
   }
 
-#Function to work out if you win or lose a 50/50.
-def fiftyfifty(haspulledstandard):
-    if not haspulledstandard:
-        if random.randrange(0, 100) <= 50:
-            return "standard", True
+
+class WishGenerator:
+  
+    def __init__(self, wishnumber, trialnumber, events = 0, standards = 0, overall = 0):
+        self.wishnumber = wishnumber
+        self.trialnumber = trialnumber
+        self.events = events
+        self.standards = standards
+        
+    def setrunresult(self):
+        self.events, self.standards, self.overall = self.wishrepeater(self.wishnumber, self.trialnumber)
+
+    #Function to work out if you win or lose a 50/50.
+    def fiftyfifty(self, haspulledstandard):
+        if not haspulledstandard:
+            if random.randrange(0, 100) <= 50:
+                return "standard", True
+            else:
+                return "event", False
         else:
             return "event", False
-    else:
-        return "event", False
-    
-def primoconverter(primos, fates):
-    leftover = primos % 160
-    primosspent = primos - leftover
-    wishes = fates + (primosspent / 160)
-    print("Your primogems got you " + str(wishes - fates) + " wishes for " + str(wishes) + " in total.")
-    return wishes
-    
-def wishonce(pity):
-    chance = chancedict.get(pity)
-    diceroll = random.uniform(0,100)
-    if diceroll < chance:
-        return True
-    else:
-        return False
-  
-def makeawish(wishnumber):
-    pityscore = 1
-    wishcounter = 0
-    pullscounter = {"event" : 0, "standard" : 0}
-    haspulledstandard = False
-    while wishcounter < wishnumber:
-        if wishonce(pityscore):
-            successtype, haspulledstandard = fiftyfifty(haspulledstandard)
-            pullscounter[successtype] += 1
-            pityscore = 1
-            wishcounter += 1
+        
+    def primoconverter(self, primos, fates):
+        leftover = primos % 160
+        primosspent = primos - leftover
+        wishes = fates + (primosspent / 160)
+        print("Your primogems got you " + str(wishes - fates) + " wishes for " + str(wishes) + " in total.")
+        return wishes
+        
+    def wishonce(self, pity):
+        chance = chancedict.get(pity)
+        diceroll = random.uniform(0,100)
+        if diceroll < chance:
+            return True
         else:
-            pityscore += 1
-            wishcounter += 1
-    return pullscounter
+            return False
+      
+    def makeawish(self, wishnumber):
+        pityscore = 1
+        wishcounter = 0
+        pullscounter = {"event" : 0, "standard" : 0}
+        haspulledstandard = False
+        while wishcounter < wishnumber:
+            if self.wishonce(pityscore):
+                successtype, haspulledstandard = self.fiftyfifty(haspulledstandard)
+                pullscounter[successtype] += 1
+                pityscore = 1
+                wishcounter += 1
+            else:
+                pityscore += 1
+                wishcounter += 1
+        return pullscounter
+        
+    def wishrepeater(self, wishnumber, wishrepeat = 1):
+        eventslist = []
+        standardslist = []
+        repeatcount = 0
+        print("Thinking...")
+        while repeatcount <= wishrepeat:
+            #Generates a dictionary with event and standard pulls.
+            getstdandevnt = self.makeawish(wishnumber)
+            
+            #Grabs the number of successful pulls out of the dictionary.
+            eventspulled = getstdandevnt["event"]
+            standardspulled = getstdandevnt["standard"]
+            
+            #Starts building a list of successful pulls per run to make an average from.
+            eventslist.append(eventspulled)
+            standardslist.append(standardspulled)
+            repeatcount += 1
+        eventmean = round(sum(eventslist) / len(eventslist), 2)
+        standardmean = round(sum(standardslist) / len(standardslist), 2)
+        overalllist = eventslist + standardslist
+        overallmean = round(sum(overalllist) / wishrepeat, 2)
+        return eventmean, standardmean, overallmean
     
-def wishrepeater(wishnumber, wishrepeat = 1):
-    eventslist = []
-    standardslist = []
-    repeatcount = 0
-    print("Thinking...")
-    while repeatcount <= wishrepeat:
-        #Generates a dictionary with event and standard pulls.
-        getstdandevnt = makeawish(wishnumber)
-        
-        #Grabs the number of successful pulls out of the dictionary.
-        eventspulled = getstdandevnt["event"]
-        standardspulled = getstdandevnt["standard"]
-        
-        #Starts building a list of successful pulls per run to make an average from.
-        eventslist.append(eventspulled)
-        standardslist.append(standardspulled)
-        repeatcount += 1
-    eventmean = round(sum(eventslist) / len(eventslist), 2)
-    standardmean = round(sum(standardslist) / len(standardslist), 2)
-    overalllist = eventslist + standardslist
-    overallaverage = round(sum(overalllist) / wishrepeat, 2)
-    print("In " + str(wishrepeat) + " batches of " + str(wishnumber) + " you pulled an event five star an average of " + str(eventmean) + " times.")
-    print("You pulled a standard five star an average of " + str(standardmean) + " times.")
-    print("You pulled any five star an average of " + str(overallaverage) + " times.")
+    def wishprinter(self):
+        print("In " + str(self.trialnumber) + " batches of " + str(self.wishnumber) + " you pulled an event five star an average of " + str(self.events) + " times.")
+        print("You pulled a standard five star an average of " + str(self.standards) + " times.")
+        print("You pulled any five star an average of " + str(self.overall) + " times.")
 
 #Running and deciding which functions to use.
 
@@ -167,9 +182,11 @@ if runprimos.upper() == "Y":
     primogems = int(input("How many primogems do you have?"))
     intertwined = int(input("How many intertwined fates do you have?"))
     wishrepeats = int(input("How many trials?"))
-    wishrepeater(primoconverter(primogems, intertwined), wishrepeats)   
+    currentrun = WishGenerator(WishGenerator.primoconverter(primogems, intertwined), wishrepeats)   
 else:             
     wishnumbers = int(input("How many wishes?"))
     wishrepeats = int(input("How many times?"))
-    wishrepeater(wishnumbers, wishrepeats)
+    currentrun = WishGenerator(wishnumbers, wishrepeats)
+    currentrun.setrunresult()
                  
+currentrun.wishprinter()

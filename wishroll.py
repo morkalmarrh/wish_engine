@@ -136,8 +136,7 @@ class WishGenerator:
         else:
             return False
       
-    def makeawish(self, wishnumber):
-        pityscore = int(input("What's your current pity? (Put 1 for no pity.)"))
+    def makeawish(self, wishnumber, pityscore = 1):
         wishcounter = 0
         pullscounter = {"event" : 0, "standard" : 0}
         haspulledstandard = False
@@ -187,12 +186,16 @@ if runprimos.upper() == "Y":
     primogems = int(input("How many primogems do you have?"))
     intertwined = int(input("How many intertwined fates do you have?"))
     wishrepeats = int(input("How many times to do you to simulate?"))
+    pityscore = int(input("What's your current pity? (Put 1 for no pity.)"))
+    if wishrepeats <= 0:
+        wishrepeats = 1
     currentrun = WishGenerator(wishnumber = WishGenerator.primoconverter(primogems, intertwined),trialnumber = wishrepeats)   
     currentrun.setrunresult()
     
 else:             
     wishnumbers = int(input("How many wishes?"))
     wishrepeats = int(input("How many times?"))
+    pityscore = int(input("What's your current pity? (Put 1 for no pity.)"))
     currentrun = WishGenerator(wishnumbers, wishrepeats)
     currentrun.setrunresult()
                  

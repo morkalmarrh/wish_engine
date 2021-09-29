@@ -104,10 +104,11 @@ def percentchance(target):
 
 class WishGenerator:
   
-    def __init__(self, wishnumber, trialnumber, events = 0, standards = 0, overall = 0, pityinput = 1):
+    def __init__(self, wishnumber, trialnumber, events = 0, standards = 0, overall = 0, pityinput = 1, pulledstandard = False):
         self.wishnumber = wishnumber
         self.trialnumber = trialnumber
         self.pityinput = pityinput
+        self.pulledstandard = pulledstandard
         
     def setrunresult(self):
         self.events, self.standards, self.overall = self.wishrepeater(self.wishnumber, self.trialnumber, self.pityinput)
@@ -137,10 +138,9 @@ class WishGenerator:
         else:
             return False
       
-    def makeawish(self, wishnumber, pityscore):
+    def makeawish(self, wishnumber, pityscore, haspulledstandard):
         wishcounter = 0
         pullscounter = {"event" : 0, "standard" : 0}
-        haspulledstandard = False
         while wishcounter < wishnumber:
             if self.wishonce(pityscore):
                 successtype, haspulledstandard = self.fiftyfifty(haspulledstandard)
@@ -159,7 +159,7 @@ class WishGenerator:
         print("Thinking...")
         while repeatcount <= wishrepeat:
             #Generates a dictionary with event and standard pulls.
-            getstdandevnt = self.makeawish(wishnumber, pityscore)
+            getstdandevnt = self.makeawish(wishnumber, pityscore, self.pulledstandard)
             
             #Grabs the number of successful pulls out of the dictionary.
             eventspulled = getstdandevnt["event"]
@@ -182,22 +182,24 @@ class WishGenerator:
 
 #Running and deciding which functions to use.
 
+pityscore = int(input("What's your current pity? (Put 1 for no pity.)"))
+pulledstandard = input("Did you pull a standard 5* since you last pulled an event 5*? (Y/N)")
+if pulledstandard.upper() == "Y":
+    pulledstandard = True
 runprimos = input("Convert primos? (Y/N)")
 if runprimos.upper() == "Y":
     primogems = int(input("How many primogems do you have?"))
     intertwined = int(input("How many intertwined fates do you have?"))
     wishrepeats = int(input("How many times to do you to simulate?"))
-    pityscore = int(input("What's your current pity? (Put 1 for no pity.)"))
     if wishrepeats <= 0:
         wishrepeats = 1
-    currentrun = WishGenerator(wishnumber = WishGenerator.primoconverter(primogems, intertwined),trialnumber = wishrepeats, pityinput = pityscore)    
+    currentrun = WishGenerator(wishnumber = WishGenerator.primoconverter(primogems, intertwined),trialnumber = wishrepeats, pityinput = pityscore, pulledstandard = pulledstandard)    
     currentrun.setrunresult()
     
 else:             
     wishnumbers = int(input("How many wishes?"))
     wishrepeats = int(input("How many times?"))
-    pityscore = int(input("What's your current pity? (Put 1 for no pity.)"))
-    currentrun = WishGenerator(wishnumbers, wishrepeats, pityinput = pityscore)
+    currentrun = WishGenerator(wishnumbers, wishrepeats, pityinput = pityscore, pulledstandard = pulledstandard)
     currentrun.setrunresult()
                  
 currentrun.wishprinter()

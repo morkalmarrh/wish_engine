@@ -94,6 +94,13 @@ chancedict = {
   90 : 100
   }
 
+def percentchance(target):
+    chancetosum = [chancedict[x] for x in sorted(chancedict) if x <= target]
+    chancesummed = sum(chancetosum)
+    if chancesummed >= 100:
+        return 100
+    else:
+        return chancesummed
 
 class WishGenerator:
   
@@ -130,7 +137,7 @@ class WishGenerator:
             return False
       
     def makeawish(self, wishnumber):
-        pityscore = 1
+        pityscore = int(input("What's your current pity? (Put 1 for no pity.)"))
         wishcounter = 0
         pullscounter = {"event" : 0, "standard" : 0}
         haspulledstandard = False
@@ -179,7 +186,7 @@ runprimos = input("Convert primos? (Y/N)")
 if runprimos.upper() == "Y":
     primogems = int(input("How many primogems do you have?"))
     intertwined = int(input("How many intertwined fates do you have?"))
-    wishrepeats = int(input("How many trials?"))
+    wishrepeats = int(input("How many times to do you to simulate?"))
     currentrun = WishGenerator(wishnumber = WishGenerator.primoconverter(primogems, intertwined),trialnumber = wishrepeats)   
     currentrun.setrunresult()
     

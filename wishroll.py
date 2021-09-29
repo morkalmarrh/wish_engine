@@ -100,8 +100,6 @@ class WishGenerator:
     def __init__(self, wishnumber, trialnumber, events = 0, standards = 0, overall = 0):
         self.wishnumber = wishnumber
         self.trialnumber = trialnumber
-        self.events = events
-        self.standards = standards
         
     def setrunresult(self):
         self.events, self.standards, self.overall = self.wishrepeater(self.wishnumber, self.trialnumber)
@@ -116,7 +114,7 @@ class WishGenerator:
         else:
             return "event", False
         
-    def primoconverter(self, primos, fates):
+    def primoconverter(primos, fates):
         leftover = primos % 160
         primosspent = primos - leftover
         wishes = fates + (primosspent / 160)
@@ -182,7 +180,9 @@ if runprimos.upper() == "Y":
     primogems = int(input("How many primogems do you have?"))
     intertwined = int(input("How many intertwined fates do you have?"))
     wishrepeats = int(input("How many trials?"))
-    currentrun = WishGenerator(WishGenerator.primoconverter(primogems, intertwined), wishrepeats)   
+    currentrun = WishGenerator(wishnumber = WishGenerator.primoconverter(primogems, intertwined),trialnumber = wishrepeats)   
+    currentrun.setrunresult()
+    
 else:             
     wishnumbers = int(input("How many wishes?"))
     wishrepeats = int(input("How many times?"))

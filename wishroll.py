@@ -1,5 +1,6 @@
 import random
 
+#Setting wish chances based on pity. From the web.
 chancedict = { 
   1 : 0.6, 
   2 : 0.596,
@@ -93,6 +94,7 @@ chancedict = {
   90 : 100
   }
 
+#Function to work out if you win or lose a 50/50.
 def fiftyfifty(haspulledstandard):
     if not haspulledstandard:
         if random.randrange(0, 100) <= 50:
@@ -109,7 +111,6 @@ def primoconverter(primos, fates):
     print("Your primogems got you " + str(wishes - fates) + " wishes for " + str(wishes) + " in total.")
     return wishes
     
-
 def wishonce(pity):
     chance = chancedict.get(pity)
     diceroll = random.uniform(0,100)
@@ -118,7 +119,6 @@ def wishonce(pity):
     else:
         return False
   
-
 def makeawish(wishnumber):
     pityscore = 1
     wishcounter = 0
@@ -141,9 +141,14 @@ def wishrepeater(wishnumber, wishrepeat = 1):
     repeatcount = 0
     print("Thinking...")
     while repeatcount <= wishrepeat:
+        #Generates a dictionary with event and standard pulls.
         getstdandevnt = makeawish(wishnumber)
+        
+        #Grabs the number of successful pulls out of the dictionary.
         eventspulled = getstdandevnt["event"]
         standardspulled = getstdandevnt["standard"]
+        
+        #Starts building a list of successful pulls per run to make an average from.
         eventslist.append(eventspulled)
         standardslist.append(standardspulled)
         repeatcount += 1
@@ -154,6 +159,8 @@ def wishrepeater(wishnumber, wishrepeat = 1):
     print("In " + str(wishrepeat) + " batches of " + str(wishnumber) + " you pulled an event five star an average of " + str(eventmean) + " times.")
     print("You pulled a standard five star an average of " + str(standardmean) + " times.")
     print("You pulled any five star an average of " + str(overallaverage) + " times.")
+
+#Running and deciding which functions to use.
 
 runprimos = input("Convert primos? (Y/N)")
 if runprimos.upper() == "Y":
